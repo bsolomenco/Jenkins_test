@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent Prokas
 
     stages {
         stage('Build') {

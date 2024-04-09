@@ -1,6 +1,6 @@
 #!groovy
 pipeline{
-    agent{label "Prokas"}
+    agent{label 'Prokas'}
     stages{
         stage("Test"){
             steps{

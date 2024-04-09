@@ -2,15 +2,13 @@ pipeline{
     parameters{
         string(name:"NOD", defaultValue:"Prokas", description: "Jenkins node label where to run")
     }
-    agent{label "${params.NOD}"}
+    //agent{label "${params.NOD}"}
+    agent{label "Prokas"}
     stages{
-        stage("Information"){
+        stage("Test"){
             steps{
                 script{
                     bat(label:"Information", script:"""
-                        dir C:\\ | find "bytes free"
-                        whoami
-                        ipconfig
                         cmake.exe --version
                     """)
                 }

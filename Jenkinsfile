@@ -1,8 +1,9 @@
 pipeline {
-    agent {label 'Prokas'}
+    agent none
 
     stages {
         stage('Build') {
+            agent 'Prokas'
             steps {
                 echo 'Building..'
             }

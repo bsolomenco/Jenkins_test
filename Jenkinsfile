@@ -11,13 +11,13 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sleep time: 40, unit: 'SECONDS'
+                sleep time: 60, unit: 'SECONDS'
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                sleep time: 30, unit: 'SECONDS'
+                sleep time: 60, unit: 'SECONDS'
             }
         }
     }

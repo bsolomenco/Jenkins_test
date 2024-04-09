@@ -7,11 +7,7 @@ pipeline{
     stages{
         stage("Test"){
             steps{
-                script{
-                    bat(label:"Information", script:"""
-                        cmake.exe --version
-                    """)
-                }
+                echo 'test step'
             }
         }
     }

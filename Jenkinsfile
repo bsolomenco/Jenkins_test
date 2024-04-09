@@ -1,12 +1,20 @@
-#!groovy
-pipeline{
-    agent{label 'Prokas'}
-    stages{
-        stage("Test"){
-            steps{
-                node("Prokas")
-                    echo 'test step'
-                }
+pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building..'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing..'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying....'
             }
         }
     }

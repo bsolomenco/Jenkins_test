@@ -1,3 +1,4 @@
+Jenkinsfile (Declarative Pipeline)
 pipeline {
     agent none
 
@@ -9,11 +10,13 @@ pipeline {
             }
         }
         stage('Test') {
+            agent 'Prokas'
             steps {
                 echo 'Testing..'
             }
         }
         stage('Deploy') {
+            agent 'Prokas'
             steps {
                 echo 'Deploying....'
             }

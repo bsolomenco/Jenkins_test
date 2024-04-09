@@ -4,7 +4,9 @@ pipeline{
     stages{
         stage("Test"){
             steps{
-                echo 'test step'
+                node("Prokas")
+                    echo 'test step'
+                }
             }
         }
     }

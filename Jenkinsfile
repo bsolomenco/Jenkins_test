@@ -3,19 +3,19 @@ pipeline {
 
     stages {
         stage('Build') {
-            agent 'Prokas'
+            agent {label 'Prokas'}
             steps {
                 echo 'Building..'
             }
         }
         stage('Test') {
-            agent 'Prokas'
+            agent {label 'Prokas'}
             steps {
                 echo 'Testing..'
             }
         }
         stage('Deploy') {
-            agent 'Prokas'
+            agent {label 'Prokas'}
             steps {
                 echo 'Deploying....'
             }

@@ -1,6 +1,6 @@
 /*
 - Do not allow concurrent builds
-- GitHub hook trigger for GITScm polling
+- GitHub hook trigger for GITScm polling ? (needs firewal configuration to allow github to PUSH to Jenkins)
 - Pipeline script from SCM
     - branch: main
 */

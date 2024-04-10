@@ -1,3 +1,9 @@
+/*
+- Do not allow concurrent builds
+- GitHub hook trigger for GITScm polling
+- Pipeline script from SCM
+    - branch: main
+*/
 pipeline {
     agent {label 'Prokas'}
 

@@ -14,12 +14,19 @@ def startBuild = false
 pipeline {
     agent {label 'Prokas'}
 
+    environment {
+        max = 2
+        rnd = "${Math.abs(new Random().nextInt(max+1))}"
+    }
+
     stages {
         stage('Next?') {
             steps {
                 echo 'checking next commit ...'
                 sleep time: 10, unit: 'SECONDS'
-                startBuild = "${Math.abs(new Random().nextInt(2))}"
+                //startBuild = "${Math.abs(new Random().nextInt(2))}"
+                echo 'rnd=${rnd}'
+                startBuild = ${env.rnd}
                 echo 'startBuild=${startBuild}'
             }
         }

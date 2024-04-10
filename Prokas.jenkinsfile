@@ -26,8 +26,10 @@ pipeline {
                 sleep time: 10, unit: 'SECONDS'
                 //startBuild = "${Math.abs(new Random().nextInt(2))}"
                 echo "rnd=${env.rnd}"
-                startBuild = ${env.rnd}
-                echo "startBuild=${startBuild}"
+                script{
+                    startBuild = ${env.rnd}
+                    echo "startBuild=${startBuild}"
+                }
             }
         }
         stage('Build') {

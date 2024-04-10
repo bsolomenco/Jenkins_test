@@ -27,8 +27,8 @@ pipeline {
         stage('Build') {
             when{expression{startBuild==1}}
             steps {
-                echo 'build if ...'
-                sleep time: 100, unit: 'SECONDS'
+                echo 'build if there is a next commit ...'
+                sleep time: 10, unit: 'SECONDS'
             }
         }
     }

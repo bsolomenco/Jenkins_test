@@ -27,7 +27,8 @@ pipeline {
                 //startBuild = "${Math.abs(new Random().nextInt(2))}"
                 echo "rnd=${env.rnd}"
                 script{
-                    startBuild = ${env.rnd}
+                    //startBuild = ${env.rnd}
+                    startBuild = Math.abs(new Random().nextInt(9))
                     echo "startBuild=${startBuild}"
                 }
             }

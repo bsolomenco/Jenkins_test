@@ -10,7 +10,7 @@
     - branch: main
 - Lightweight checkout DISABLED
 */
-def startBuild = false
+def startBuild = 0
 pipeline {
     agent {label 'Prokas'}
 
@@ -26,8 +26,8 @@ pipeline {
                 sleep time: 10, unit: 'SECONDS'
                 //startBuild = "${Math.abs(new Random().nextInt(2))}"
                 echo "rnd=${env.rnd}"
-                //startBuild = ${env.rnd}
-                //echo 'startBuild=${startBuild}'
+                startBuild = ${env.rnd}
+                echo "startBuild=${startBuild}"
             }
         }
         stage('Build') {

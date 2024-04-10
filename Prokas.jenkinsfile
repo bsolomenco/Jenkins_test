@@ -19,7 +19,7 @@ pipeline {
                 echo 'checking next commit ...'
                 //sleep time: 10, unit: 'SECONDS'
                 script{
-                    startBuild = Math.abs(new Random().nextInt(9))
+                    startBuild = Math.abs(new Random().nextInt(2))
                     echo "startBuild=${startBuild}"
                 }
             }

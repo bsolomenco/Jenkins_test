@@ -6,6 +6,8 @@
     - Always trigger, even if the build is aborted
 - ? GitHub hook trigger for GITScm polling ? (needs firewal configuration to allow github to PUSH to Jenkins)
 - Poll SCM "* * * * *"
+- Build periodically "* * * * *"
+- Quiet period 0
 - Pipeline script from SCM
     - branch: main
 - Lightweight checkout DISABLED

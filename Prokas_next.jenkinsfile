@@ -1,10 +1,12 @@
+def Src = "${paramsDEV_.DIR}\\src"
+def Rev = 0
 pipeline{
     options{timestamps()}
     parameters{
         string(name:"NOD"         , defaultValue:"Prokas"        , description: "Jenkins node label where to run")
         string(name:"PROBUILD_DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
-        string(name:"TRUNK_DIR"   , defaultValue:"G:\\TRUNK"     , description: "Trunk folder")
-        string(name:"AKT_DIR"     , defaultValue:"G:\\Akt"       , description: "Akt folder")
+        string(name:"DEV_DIR"     , defaultValue:"G:\\DEV"       , description: "Dev folder (trunk)")
+        string(name:"AKT_DIR"     , defaultValue:"G:\\Akt"       , description: "Akt folder (latest version, e.g. 7.6.725 ...)")
     }
     agent{label "${params.NOD}"}
     stages{
@@ -13,17 +15,35 @@ pipeline{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
                     bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
-                        svn.exe cleanup ${params.PROBUILD_DIR}"
-                        svn.exe cleanup ${params.PROBUILD_DIR} --vacuum-pristines"
-                        svn.exe cleanup ${params.PROBUILD_DIR} --remove-unversioned"
-                        svn.exe cleanup ${params.PROBUILD_DIR} --remove-ignored"
-                        svn.exe revert  ${params.PROBUILD_DIR} -R"
-                        svn.exe update  ${params.PROBUILD_DIR}
+                        Prokas.exe svn ccu ProBuild"
                     """)
                 }
+            }
+        }
+        stage("DEV"){
+            steps{
                 script{
-                    manager.addShortText("AKT")
-                    bat(label:"clone/clean/revert/update AKT", script:"""
+                    manager.addShortText("${params.DEV_DIR}")
+                    bat(label:"clean/revert/update ${params.DEV_DIR}", script:"""
+                        if NOT EXIST "${params.DEV_DIR}" (
+                            md "${params.DEV_DIR}"
+                            cd /D ${params.DEV_DIR}
+                            Prokas.exe svn ccu trunk"
+                        )
+                    """)
+                    def currRevision = bat(label:'get curr revision', returnStatus:false, returnStdout:true, script: "@echo off & svn info --revision COMMITTED --show-item revision ${Src}").trim().toInteger()
+                    Rev = bat(label:'get next revision', returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${Src}")
+                    if(currRevision < Rev){
+                        echo "currRevision=${currRevision} < nextRevision=${Rev} => start testing job"
+                    }
+                }
+            }
+        }
+        stage("AKT"){
+            steps{
+                script{
+                    manager.addShortText("${params.AKT_DIR}")
+                    bat(label:"clean/revert/update ${params.AKT_DIR}", script:"""
                         if NOT EXIST "${params.AKT_DIR}" (md "${params.AKT_DIR}")
                         cd /D ${params.AKT_DIR}
                         Prokas.exe svn ccu akt"

@@ -1,4 +1,7 @@
+def Nod = "${params.NOD}"
+def Dir = "${params.DIR}"
 def Src = "${params.DEV_DIR}\\src"
+def ProBuildBin = "G:\\ProBuild\\Utilities\\Common"
 def Rev = 0
 def startTestJob_DEV = false
 pipeline{
@@ -6,7 +9,7 @@ pipeline{
     parameters{
         string(name:"NOD"         , defaultValue:"Prokas"        , description: "Jenkins node label where to run")
         string(name:"PROBUILD_DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
-        string(name:"DEV_DIR"     , defaultValue:"G:\\DEV"       , description: "Dev folder (trunk)")
+        string(name:"DEV_DIR"     , defaultValue:"G:\\Dev"       , description: "Dev folder (trunk)")
         string(name:"AKT_DIR"     , defaultValue:"G:\\Akt"       , description: "Akt folder (latest version, e.g. 7.6.725 ...)")
     }
     agent{label "${params.NOD}"}
@@ -21,7 +24,7 @@ pipeline{
                 }
             }
         }
-        stage("DEV"){
+        stage("DEV?"){
             steps{
                 script{
                     manager.addShortText("${params.DEV_DIR}")
@@ -41,7 +44,17 @@ pipeline{
                 }
             }
         }
-        stage("AKT"){
+        stage("DEV start testing job for the new revision"){
+            when{expression{startTestJob_DEV==true}}
+            steps{
+                build job:'DEV_Revision_test', quietPeriod:0, wait:false, parameters:[
+                    [$class: 'StringParameterValue', name: 'NOD', value: "${Nod}"],
+                    [$class: 'StringParameterValue', name: 'DIR', value: "${Dir}"],
+                    [$class: 'StringParameterValue', name: 'REV', value: "${Rev}"],
+                ]
+                echo "duration=${currentBuild.durationString}"
+            }
+        }        stage("AKT?"){
             when{expression{!startTestJob_DEV==false}}
             steps{
                 script{

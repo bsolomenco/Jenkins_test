@@ -1,0 +1,19 @@
+pipeline{
+    options{timestamps()}
+    parameters{
+        string(name:"NOD", defaultValue:"Prokas"        , description: "Jenkins node label where to run")
+        string(name:"DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
+    }
+    agent{label "${params.NOD}"}
+    stages{
+        stage("test"){
+            steps{
+                script{
+                    bat(label:"test...", script:"""
+                        echo "test Prokas_AKT_next.jenkinsfile"
+                    """)
+                }
+            }
+        }
+    }
+}

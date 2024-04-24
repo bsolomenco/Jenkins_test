@@ -27,7 +27,7 @@ pipeline{
             agent{label "${Nod}"}
             steps{
                 script{
-                    manager.addShortText("${Rev}")
+                    manager.addShortText("${params.DIR} ${Rev}")
                 }
                 build(job:"Dir/DIR_CleanRevertUpdate", quietPeriod:0, wait:true, parameters:[
                     [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],

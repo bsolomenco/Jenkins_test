@@ -10,7 +10,7 @@
 */
 
 def Nod = "${params.NOD}"
-def Dir = "${params.DIR}"
+def Dir = "${params.DEV_DIR}"
 def Src = "${params.DEV_DIR}\\src"
 def ProBuildBin = "G:\\ProBuild\\Utilities\\Common"
 def Rev = 0

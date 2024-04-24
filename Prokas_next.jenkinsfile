@@ -9,7 +9,7 @@ pipeline{
         stage("test"){
             steps{
                 script{
-                    echo "test Prokas_AKT_next.jenkinsfile"
+                    echo "test Prokas_next.jenkinsfile"
                 }
             }
         }

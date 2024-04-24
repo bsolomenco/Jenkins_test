@@ -12,7 +12,7 @@ pipeline{
             steps{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
-                    bat(label:"${clean/revert/update params.PROBUILD_DIR}", script:"""
+                    bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
                         svn.exe cleanup ${params.PROBUILD_DIR}"
                         svn.exe cleanup ${params.PROBUILD_DIR} --vacuum-pristines"
                         svn.exe cleanup ${params.PROBUILD_DIR} --remove-unversioned"

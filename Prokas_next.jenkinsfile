@@ -1,3 +1,14 @@
+/*
+- clone/clean/update Probuild
+- if there is a new commit for Dev
+    test Dev revision
+- else
+    get current Akt revision
+    clone/clean/update Akt
+    if something new on Akt
+        test Akt revision
+*/
+
 def Nod = "${params.NOD}"
 def Dir = "${params.DIR}"
 def Src = "${params.DEV_DIR}\\src"
@@ -19,6 +30,9 @@ pipeline{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
                     bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
+                        if NOT EXIST "${params.PROBUILD_DIR}" (
+                            md "${params.PROBUILD_DIR}"
+                            cd /D ${params.PROBUILD_DIR}
                         Prokas.exe svn ccu ProBuild"
                     """)
                 }
@@ -44,10 +58,10 @@ pipeline{
                 }
             }
         }
-        stage("DEV revision test"){
+        stage("DEV rev test"){
             when{expression{startTestJob_DEV==true}}
             steps{
-                build job:'DEV_Revision_test', quietPeriod:0, wait:false, parameters:[
+                build job:'Dev_Revtest', quietPeriod:0, wait:false, parameters:[
                     [$class: 'StringParameterValue', name: 'NOD', value: "${Nod}"],
                     [$class: 'StringParameterValue', name: 'DIR', value: "${Dir}"],
                     [$class: 'StringParameterValue', name: 'REV', value: "${Rev}"],

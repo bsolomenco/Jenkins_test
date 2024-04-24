@@ -2,11 +2,7 @@
 - update to revision
 - run tests on revision; each test will send (REGRESSION | FIXED) notification
 */
-def Nod = "${params.NOD}"
-def Dir = "${params.DIR}"
 def Src = "${params.DIR}\\src"
-def Rev = "${params.REV}"
-def Sec = "${params.SEC}"
 def ProBuildBin = "G:\\ProBuild\\Utilities\\Common"
 def author = ""
 pipeline{
@@ -24,10 +20,10 @@ pipeline{
     options{timestamps()}
     stages{
         stage("Update to Revision"){
-            agent{label "${Nod}"}
+            agent{label "${params.NOD}"}
             steps{
                 script{
-                    manager.addShortText("${params.DIR} ${Rev}")
+                    manager.addShortText("${params.DIR} ${params.REV}")
                 }
                 build(job:"Dir/DIR_CleanRevertUpdate", quietPeriod:0, wait:true, parameters:[
                     [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],
@@ -36,15 +32,15 @@ pipeline{
                 ])
                 script{
                     author = bat(label:"get current author", returnStatus:false, returnStdout:true, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn author ${Src}").trim()
-                    Rev = bat(label:"get current revision", returnStatus:false, returnStdout:true, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn revision ${Src}").trim()
+                    revision = bat(label:"get current revision", returnStatus:false, returnStdout:true, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn revision ${Src}").trim()
                     def nextRev = bat(label:"get next revision", returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${Src}")
                     //def revDate = bat(label:"get revision's date", returnStatus:false, returnStdout:true, script: "@echo off & svn info ${Src} --show-item last-changed-date --no-newline").trim()
-                    echo "revision=${Rev} author=${author} nextRevision=${nextRev}"
+                    echo "revision=${revision} author=${author} nextRevision=${nextRev}"
                     manager.removeBadges()
-                    manager.addShortText("${Rev} ${author}")
+                    manager.addShortText("${params.DIR} ${revision} ${author}")
                     bat(label:"Prokas headers", script:"""
                         echo "======== headers ========"
-                        cd /D ${Dir}
+                        cd /D ${params.DIR}
                         if EXIST "bin" (rmdir /Q /S bin)
                         if EXIST "bnd" (rmdir /Q /S bnd)
                         if EXIST "inc" (rmdir /Q /S inc)
@@ -56,7 +52,7 @@ pipeline{
             }
         }
         stage("DB re-creation"){
-            agent{label "${Nod}"}
+            agent{label "${params.NOD}"}
             steps{
                 echo 'DB re-creation'
                 build(job:"Db/DB_recreateFromScratch", quietPeriod:0, wait:true, parameters:[
@@ -71,12 +67,10 @@ pipeline{
                 dir("${params.DIR}"){
                     script{
                         echo 'full build'
-                        /*
                         bat(label:"======== build src ========", script:"""
                             call C:\\cmd\\ProkasEnv.cmd
                             ${ProBuildBin}\\Prokas.exe make ${params.CFG} Prokas_${params.MOD}.modules
                         """)
-                        */
                     }
                 }
             }
@@ -85,15 +79,15 @@ pipeline{
     post{
         fixed{
             emailext attachLog: false,
-                subject : "FIXED rev=${Rev} ${BUILD_TAG}",
+                subject : "FIXED rev=${params.REV} ${BUILD_TAG}",
                 //to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
                 to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de",
                 mimeType: 'text/html',
                 body    : """
                     <table border style="border-collapse: collapse;">
-                        <tr><td>NODE        </td><td>${Nod}</td></tr>
-                        <tr><td>DIR         </td><td>${Dir}</td></tr>
-                        <tr><td>revision    </td><td>${Rev}</td></tr>
+                        <tr><td>NODE        </td><td>${params.NOD}</td></tr>
+                        <tr><td>DIR         </td><td>${params.DIR}</td></tr>
+                        <tr><td>revision    </td><td>${params.REV}</td></tr>
                         <tr><td>author      </td><td>${author}</td></tr>
                         <tr><td>status      </td><td style="color:green">FIXED</td></tr>
                         <tr><td>BUILD_URL   </td><td><a href=${BUILD_URL}>${BUILD_URL}</a></td></tr>
@@ -106,15 +100,15 @@ pipeline{
         }
         regression{
             emailext attachLog: true,
-                subject : "REGRESSION rev=${Rev} ${BUILD_TAG}",
+                subject : "REGRESSION rev=${params.REV} ${BUILD_TAG}",
                 //to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
                 to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de",
                 mimeType: 'text/html',
                 body    : """
                     <table border style="border-collapse: collapse;">
-                        <tr><td>NODE        </td><td>${Nod}</td></tr>
-                        <tr><td>DIR         </td><td>${Dir}</td></tr>
-                        <tr><td>revision    </td><td>${Rev}</td></tr>
+                        <tr><td>NODE        </td><td>${params.NOD}</td></tr>
+                        <tr><td>DIR         </td><td>${params.DIR}</td></tr>
+                        <tr><td>revision    </td><td>${params.REV}</td></tr>
                         <tr><td>author      </td><td>${author}</td></tr>
                         <tr><td>status      </td><td style="color:red">REGRESSION</td></tr>
                         <tr><td>BUILD_URL   </td><td><a href=${BUILD_URL}>${BUILD_URL}</a></td></tr>

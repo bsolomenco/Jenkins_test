@@ -6,14 +6,7 @@ pipeline{
     }
     agent{label "${params.NOD}"}
     stages{
-        stage("hint"){
-            steps{
-                script{
-                    manager.addShortText("${params.DIR}")
-                }
-            }
-        }
-        stage("clean"){
+        stage("ProBuild"){
             when{expression{params.CLEAN}}
             steps{
                 script{

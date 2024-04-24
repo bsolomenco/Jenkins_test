@@ -61,7 +61,7 @@ pipeline{
         stage("DEV rev test"){
             when{expression{startTestJob_DEV==true}}
             steps{
-                build job:'Dev_Revtest', quietPeriod:0, wait:false, parameters:[
+                build job:'Dev_RevTest', quietPeriod:0, wait:false, parameters:[
                     [$class: 'StringParameterValue', name: 'NOD', value: "${Nod}"],
                     [$class: 'StringParameterValue', name: 'DIR', value: "${Dir}"],
                     [$class: 'StringParameterValue', name: 'REV', value: "${Rev}"],

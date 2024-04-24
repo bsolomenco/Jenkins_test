@@ -71,7 +71,6 @@ pipeline{
             when{expression{startTestJob_DEV==false}}
             steps{
                 script{
-                    manager.addShortText("${params.AKT_DIR}")
                     bat(label:"clean/revert/update ${params.AKT_DIR}", script:"""
                         if NOT EXIST "${params.AKT_DIR}" (md "${params.AKT_DIR}")
                         cd /D ${params.AKT_DIR}

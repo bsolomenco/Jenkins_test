@@ -34,7 +34,7 @@ pipeline{
                 }
             }
         }
-        stage("DEV?"){
+        stage("Dev?"){
             steps{
                 script{
                     bat(label:"clean/revert/update ${params.DEV_DIR}", script:"""
@@ -53,7 +53,7 @@ pipeline{
                 }
             }
         }
-        stage("DEV rev test"){
+        stage("RevTest_Dev"){
             when{expression{startTestJob_DEV==true}}
             steps{
                 script{
@@ -67,7 +67,7 @@ pipeline{
                 echo "duration=${currentBuild.durationString}"
             }
         }
-        stage("AKT?"){
+        stage("Akt?"){
             when{expression{startTestJob_DEV==false}}
             steps{
                 script{
@@ -85,7 +85,7 @@ pipeline{
                 }
             }
         }
-        stage("AKT rev test"){
+        stage("RevTest_Akt"){
             when{expression{startTestJob_AKT==true}}
             steps{
                 script{

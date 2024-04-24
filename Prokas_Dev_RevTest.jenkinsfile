@@ -58,10 +58,12 @@ pipeline{
         stage("DB re-creation"){
             agent{label "${Nod}"}
             steps{
+                /*
                 build(job:"Db/DB_recreateFromScratch", quietPeriod:0, wait:true, parameters:[
                     [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],
                     [$class:'StringParameterValue', name:'DIR', value: "${params.DIR}"],
                 ])
+                */
             }
         }
         stage("CPP 32Full"){
@@ -69,10 +71,12 @@ pipeline{
             steps{
                 dir("${params.DIR}"){
                     script{
+                        /*
                         bat(label:"======== build src ========", script:"""
                             call C:\\cmd\\ProkasEnv.cmd
                             ${ProBuildBin}\\Prokas.exe make ${params.CFG} Prokas_${params.MOD}.modules
                         """)
+                        */
                     }
                 }
             }

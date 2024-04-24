@@ -58,6 +58,7 @@ pipeline{
         stage("DB re-creation"){
             agent{label "${Nod}"}
             steps{
+                echo 'DB re-creation'
                 /*
                 build(job:"Db/DB_recreateFromScratch", quietPeriod:0, wait:true, parameters:[
                     [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],
@@ -125,8 +126,6 @@ pipeline{
                     </table>
                     <pre>\${BUILD_LOG, maxLines=200, escapeHtml=false}</pre>
                 """
-        }
-        cleanup{
         }
     }
 }

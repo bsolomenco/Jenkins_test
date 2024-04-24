@@ -38,7 +38,6 @@ pipeline{
         stage("DEV?"){
             steps{
                 script{
-                    manager.addShortText("${params.DEV_DIR}")
                     bat(label:"clean/revert/update ${params.DEV_DIR}", script:"""
                         if NOT EXIST "${params.DEV_DIR}" (
                             md "${params.DEV_DIR}"
@@ -58,6 +57,9 @@ pipeline{
         stage("DEV rev test"){
             when{expression{startTestJob_DEV==true}}
             steps{
+                script{
+                    manager.addShortText("${params.DEV_DIR}")
+                }
                 build job:'Dev_RevTest', quietPeriod:0, wait:false, parameters:[
                     [$class: 'StringParameterValue', name: 'NOD', value: "${Nod}"],
                     [$class: 'StringParameterValue', name: 'DIR', value: "${Dir}"],

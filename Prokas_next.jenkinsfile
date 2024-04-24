@@ -21,6 +21,12 @@ pipeline{
                         svn.exe update  ${params.PROBUILD_DIR}
                     """)
                 }
+                script{
+                    manager.addShortText("AKT")
+                    bat(label:"clone/clean/revert/update AKT", script:"""
+                        Prokas.exe svn ccu akt ${params.AKT_DIR}"
+                    """)
+                }
             }
         }
     }

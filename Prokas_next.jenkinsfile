@@ -13,5 +13,12 @@ pipeline{
                 }
             }
         }
+        stage("hint"){
+            steps{
+                script{
+                    manager.addShortText("${params.DIR}")
+                }
+            }
+        }
     }
 }

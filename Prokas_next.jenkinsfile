@@ -1,23 +1,24 @@
 pipeline{
     options{timestamps()}
     parameters{
-        string(name:"NOD", defaultValue:"Prokas"        , description: "Jenkins node label where to run")
-        string(name:"DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
+        string(name:"NOD"         , defaultValue:"Prokas"        , description: "Jenkins node label where to run")
+        string(name:"PROBUILD_DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
+        string(name:"TRUNK_DIR"   , defaultValue:"G:\\TRUNK"     , description: "Trunk folder")
+        string(name:"AKT_DIR"     , defaultValue:"G:\\Akt"       , description: "Akt folder")
     }
     agent{label "${params.NOD}"}
     stages{
         stage("ProBuild"){
-            when{expression{params.CLEAN}}
             steps{
                 script{
-                    manager.addShortText("${params.DIR}")
-                    bat(label:"${params.DIR}", script:"""
-                        svn.exe cleanup ${params.DIR}"
-                        svn.exe cleanup ${params.DIR} --vacuum-pristines"
-                        svn.exe cleanup ${params.DIR} --remove-unversioned"
-                        svn.exe cleanup ${params.DIR} --remove-ignored"
-                        svn.exe revert  ${params.DIR} -R"
-                        svn.exe update  ${params.DIR}
+                    manager.addShortText("${params.PROBUILD_DIR}")
+                    bat(label:"${clean/revert/update params.PROBUILD_DIR}", script:"""
+                        svn.exe cleanup ${params.PROBUILD_DIR}"
+                        svn.exe cleanup ${params.PROBUILD_DIR} --vacuum-pristines"
+                        svn.exe cleanup ${params.PROBUILD_DIR} --remove-unversioned"
+                        svn.exe cleanup ${params.PROBUILD_DIR} --remove-ignored"
+                        svn.exe revert  ${params.PROBUILD_DIR} -R"
+                        svn.exe update  ${params.PROBUILD_DIR}
                     """)
                 }
             }

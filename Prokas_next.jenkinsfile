@@ -1,5 +1,6 @@
-def Src = "${paramsDEV_.DIR}\\src"
+def Src = "${paramsDEV_DIR}\\src"
 def Rev = 0
+def startTestJob_DEV = false
 pipeline{
     options{timestamps()}
     parameters{
@@ -35,11 +36,13 @@ pipeline{
                     Rev = bat(label:'get next revision', returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${Src}")
                     if(currRevision < Rev){
                         echo "currRevision=${currRevision} < nextRevision=${Rev} => start testing job"
+                        startTestJob_DEV = true
                     }
                 }
             }
         }
         stage("AKT"){
+            when{expression{!startTestJob_DEV}
             steps{
                 script{
                     manager.addShortText("${params.AKT_DIR}")

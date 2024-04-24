@@ -1,4 +1,4 @@
-def Src = "${paramsDEV_DIR}\\src"
+def Src = "${params.DEV_DIR}\\src"
 def Rev = 0
 def startTestJob_DEV = false
 pipeline{

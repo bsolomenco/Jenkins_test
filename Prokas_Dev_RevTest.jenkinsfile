@@ -72,6 +72,7 @@ pipeline{
             steps{
                 dir("${params.DIR}"){
                     script{
+                        echo 'full build'
                         /*
                         bat(label:"======== build src ========", script:"""
                             call C:\\cmd\\ProkasEnv.cmd

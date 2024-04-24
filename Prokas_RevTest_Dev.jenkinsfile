@@ -1,0 +1,122 @@
+/*
+- update to revision
+- run tests on revision; each test will send (REGRESSION | FIXED) notification
+*/
+def Src = "${params.DIR}\\src"
+def ProBuildBin = "G:\\ProBuild\\Utilities\\Common"
+def author = ""
+pipeline{
+    parameters{
+        string(name:"NOD", defaultValue:"Prokas"        , description: "Jenkins node label where to run")
+        string(name:"DIR", defaultValue:"G:\\Dev"       , description: "development/trunk working dir")
+        string(name:"REV", defaultValue:""              , description: "revision number (empty => last)")
+        string(name:"CFG", defaultValue:"32"            , description: "consfiguration / CMake preset")
+        string(name:"MOD", defaultValue:"CPP"           , description: "modules list; eg. Prokas_CPP.modules")
+}
+    agent none
+    environment{
+        PROKAS_CMAKE_PRESETS = "${params.DIR}\\src\\CMake"
+    }
+    options{timestamps()}
+    stages{
+        stage("Update to Revision"){
+            agent{label "${params.NOD}"}
+            steps{
+                script{
+                    manager.addShortText("${params.DIR} ${params.REV}")
+                }
+                build(job:"Dir/DIR_CleanRevertUpdate", quietPeriod:0, wait:true, parameters:[
+                    [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],
+                    [$class:'StringParameterValue', name:'DIR', value: "${params.DIR}\\src"],
+                    [$class:'StringParameterValue', name:'REV', value: "${params.REV}"],
+                ])
+                script{
+                    author = bat(label:"get current author", returnStatus:false, returnStdout:true, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn author ${Src}").trim()
+                    revision = bat(label:"get current revision", returnStatus:false, returnStdout:true, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn revision ${Src}").trim()
+                    def nextRev = bat(label:"get next revision", returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${Src}")
+                    //def revDate = bat(label:"get revision's date", returnStatus:false, returnStdout:true, script: "@echo off & svn info ${Src} --show-item last-changed-date --no-newline").trim()
+                    echo "revision=${revision} author=${author} nextRevision=${nextRev}"
+                    manager.removeBadges()
+                    manager.addShortText("${params.DIR} ${revision} ${author}")
+                    bat(label:"Prokas headers", script:"""
+                        echo "======== headers ========"
+                        cd /D ${params.DIR}
+                        if EXIST "bin" (rmdir /Q /S bin)
+                        if EXIST "bnd" (rmdir /Q /S bnd)
+                        if EXIST "inc" (rmdir /Q /S inc)
+                        if EXIST "lib" (rmdir /Q /S lib)
+                        if EXIST "pdb" (rmdir /Q /S pdb)
+                        ${ProBuildBin}\\Prokas.exe headers overwrite
+                    """)
+                }
+            }
+        }
+        stage("DB re-creation"){
+            agent{label "${params.NOD}"}
+            steps{
+                echo 'DB re-creation'
+                build(job:"Db/DB_recreateFromScratch", quietPeriod:0, wait:true, parameters:[
+                    [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],
+                    [$class:'StringParameterValue', name:'DIR', value: "${params.DIR}"],
+                ])
+            }
+        }
+        stage("CPP 32Full"){
+            agent{label "${params.NOD}"}
+            steps{
+                dir("${params.DIR}"){
+                    script{
+                        echo 'full build'
+                        bat(label:"======== build src ========", script:"""
+                            call C:\\cmd\\ProkasEnv.cmd
+                            ${ProBuildBin}\\Prokas.exe make ${params.CFG} Prokas_${params.MOD}.modules
+                        """)
+                    }
+                }
+            }
+        }
+    }
+    post{
+        fixed{
+            emailext attachLog: false,
+                subject : "FIXED rev=${params.REV} ${BUILD_TAG}",
+                to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
+                mimeType: 'text/html',
+                body    : """
+                    <table border style="border-collapse: collapse;">
+                        <tr><td>NODE        </td><td>${params.NOD}</td></tr>
+                        <tr><td>DIR         </td><td>${params.DIR}</td></tr>
+                        <tr><td>revision    </td><td>${params.REV}</td></tr>
+                        <tr><td>author      </td><td>${author}</td></tr>
+                        <tr><td>status      </td><td style="color:green">FIXED</td></tr>
+                        <tr><td>BUILD_URL   </td><td><a href=${BUILD_URL}>${BUILD_URL}</a></td></tr>
+                        <tr><td>LOG_URL     </td><td><a href=${BUILD_URL}consoleText>${BUILD_URL}consoleText</a></td></tr>
+                        <tr><td>duration    </td><td>${currentBuild.durationString.replace(' and counting', '')}</td></tr>
+                        <tr><td>DOCS        </td><td>https://confluence.intra.vsa.de/pages/viewpage.action?pageId=270483309</td></tr>
+                    </table>
+                    <pre>\${BUILD_LOG, maxLines=200, escapeHtml=false}</pre>
+                """
+        }
+        regression{
+            emailext attachLog: true,
+                subject : "REGRESSION rev=${params.REV} ${BUILD_TAG}",
+                to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
+                mimeType: 'text/html',
+                body    : """
+                    <table border style="border-collapse: collapse;">
+                        <tr><td>NODE        </td><td>${params.NOD}</td></tr>
+                        <tr><td>DIR         </td><td>${params.DIR}</td></tr>
+                        <tr><td>revision    </td><td>${params.REV}</td></tr>
+                        <tr><td>author      </td><td>${author}</td></tr>
+                        <tr><td>status      </td><td style="color:red">REGRESSION</td></tr>
+                        <tr><td>BUILD_URL   </td><td><a href=${BUILD_URL}>${BUILD_URL}</a></td></tr>
+                        <tr><td>LOG_URL     </td><td><a href=${BUILD_URL}consoleText>${BUILD_URL}consoleText</a></td></tr>
+                        <tr><td>duration    </td><td>${currentBuild.durationString.replace(' and counting', '')}</td></tr>
+                        <tr><td>TIPS        </td><td>search log for following patterns: <b style="color:red">: error</b> or <b style="color:red">: fatal</b></td></tr>
+                        <tr><td>DOCS        </td><td>https://confluence.intra.vsa.de/pages/viewpage.action?pageId=270483309</td></tr>
+                    </table>
+                    <pre>\${BUILD_LOG, maxLines=200, escapeHtml=false}</pre>
+                """
+        }
+    }
+}

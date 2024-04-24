@@ -8,7 +8,7 @@ def author = ""
 pipeline{
     parameters{
         string(name:"NOD", defaultValue:"Prokas"        , description: "Jenkins node label where to run")
-        string(name:"DIR", defaultValue:"G:\\Dev"       , description: "development/trunk working dir")
+        string(name:"DIR", defaultValue:"G:\\Akt"       , description: "Akt working dir")
         string(name:"REV", defaultValue:""              , description: "revision number (empty => last)")
         string(name:"CFG", defaultValue:"32"            , description: "consfiguration / CMake preset")
         string(name:"MOD", defaultValue:"CPP"           , description: "modules list; eg. Prokas_CPP.modules")
@@ -80,8 +80,7 @@ pipeline{
         fixed{
             emailext attachLog: false,
                 subject : "FIXED rev=${params.REV} ${BUILD_TAG}",
-                //to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
-                to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de",
+                to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
                 mimeType: 'text/html',
                 body    : """
                     <table border style="border-collapse: collapse;">

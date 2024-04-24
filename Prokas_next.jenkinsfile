@@ -59,7 +59,7 @@ pipeline{
                 script{
                     manager.addShortText("${params.DEV_DIR}")
                 }
-                build job:'Dev_RevTest', quietPeriod:0, wait:false, parameters:[
+                build job:'RevTest_Dev', quietPeriod:0, wait:false, parameters:[
                     [$class: 'StringParameterValue', name: 'NOD', value: "${params.NOD}"],
                     [$class: 'StringParameterValue', name: 'DIR', value: "${params.DEV_DIR}"],
                     [$class: 'StringParameterValue', name: 'REV', value: "${Rev}"],
@@ -91,7 +91,7 @@ pipeline{
                 script{
                     manager.addShortText("${params.AKT_DIR}")
                 }
-                build job:'Akt_RevTest', quietPeriod:0, wait:false, parameters:[
+                build job:'RevTest_Akt', quietPeriod:0, wait:false, parameters:[
                     [$class: 'StringParameterValue', name: 'NOD', value: "${params.NOD}"],
                     [$class: 'StringParameterValue', name: 'DIR', value: "${params.AKT_DIR}"],
                     [$class: 'StringParameterValue', name: 'REV', value: "${Rev}"],

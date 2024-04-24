@@ -59,12 +59,10 @@ pipeline{
             agent{label "${Nod}"}
             steps{
                 echo 'DB re-creation'
-                /*
                 build(job:"Db/DB_recreateFromScratch", quietPeriod:0, wait:true, parameters:[
                     [$class:'StringParameterValue', name:'NOD', value: "${params.NOD}"],
                     [$class:'StringParameterValue', name:'DIR', value: "${params.DIR}"],
                 ])
-                */
             }
         }
         stage("CPP 32Full"){
@@ -88,8 +86,8 @@ pipeline{
         fixed{
             emailext attachLog: false,
                 subject : "FIXED rev=${Rev} ${BUILD_TAG}",
-                //to      : "${author}@noventi.de , Bogdan.Solomenco@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
-                to      : "Bogdan.Solomenco@noventi.de",
+                //to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
+                to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de",
                 mimeType: 'text/html',
                 body    : """
                     <table border style="border-collapse: collapse;">
@@ -109,8 +107,8 @@ pipeline{
         regression{
             emailext attachLog: true,
                 subject : "REGRESSION rev=${Rev} ${BUILD_TAG}",
-                //to      : "${author}@noventi.de , Bogdan.Solomenco@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
-                to      : "Bogdan.Solomenco@noventi.de",
+                //to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de , Lucian.HODOR@noventi.de , Gabriel.PLUTA@Noventi.de",
+                to      : "${author}@noventi.de , Bogdan.SOLOMENCO@noventi.de",
                 mimeType: 'text/html',
                 body    : """
                     <table border style="border-collapse: collapse;">

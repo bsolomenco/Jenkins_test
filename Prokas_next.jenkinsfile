@@ -30,9 +30,6 @@ pipeline{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
                     bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
-                        if NOT EXIST "${params.PROBUILD_DIR}" (
-                            md "${params.PROBUILD_DIR}"
-                            cd /D ${params.PROBUILD_DIR}
                         Prokas.exe svn ccu ProBuild"
                     """)
                 }

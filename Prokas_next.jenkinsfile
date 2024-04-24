@@ -44,7 +44,7 @@ pipeline{
                 }
             }
         }
-        stage("DEV start testing job for the new revision"){
+        stage("DEV revision test"){
             when{expression{startTestJob_DEV==true}}
             steps{
                 build job:'DEV_Revision_test', quietPeriod:0, wait:false, parameters:[
@@ -54,7 +54,8 @@ pipeline{
                 ]
                 echo "duration=${currentBuild.durationString}"
             }
-        }        stage("AKT?"){
+        }
+        stage("AKT?"){
             when{expression{!startTestJob_DEV==false}}
             steps{
                 script{

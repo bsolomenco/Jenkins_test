@@ -3,6 +3,9 @@ pipeline{
     parameters{
         string(name:"NOD", defaultValue:"Prokas"        , description: "Jenkins node label where to run")
         string(name:"DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
+        booleanParam(name:"CLEAN" , defaultValue:true, description: "cleanup source tree")
+        booleanParam(name:"REVERT", defaultValue:true, description: "revert source tree")
+        booleanParam(name:"UPDATE", defaultValue:true, description: "update source tree")
     }
     agent{label "${params.NOD}"}
     stages{
@@ -17,6 +20,46 @@ pipeline{
             steps{
                 script{
                     manager.addShortText("${params.DIR}")
+                }
+            }
+        }
+        stage("clean"){
+            when{expression{params.CLEAN}}
+            steps{
+                script{
+                    manager.addShortText(" clean")
+                    bat(label:"clean DIR=${params.DIR} ...", script:"""
+                        svn.exe cleanup ${params.DIR}"
+                        svn.exe cleanup ${params.DIR} --vacuum-pristines"
+                        svn.exe cleanup ${params.DIR} --remove-unversioned"
+                        svn.exe cleanup ${params.DIR} --remove-ignored"
+                    """)
+                }
+            }
+        }
+        stage("revert"){
+            when{expression{params.REVERT}}
+            steps{
+                script{
+                    manager.addShortText(" revert")
+                    bat(label:"revert DIR=${params.DIR} ...", script:"""
+                        svn.exe revert  ${params.DIR} -R"
+                    """)
+                }
+            }
+        }
+        stage("update"){
+            when{expression{params.UPDATE}}
+            steps{
+                script{
+                    manager.addShortText(" update")
+                    bat(label:"update DIR=${params.DIR} ...", script:"""
+                        if "${params.REV}"=="" (
+                            svn update ${params.DIR}
+                        ) else (
+                            svn update ${params.DIR} --accept postpone --revision ${params.REV}
+                        )
+                    """)
                 }
             }
         }

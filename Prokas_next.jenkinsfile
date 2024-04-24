@@ -69,7 +69,7 @@ pipeline{
             }
         }
         stage("AKT?"){
-            when{expression{!startTestJob_DEV==false}}
+            when{expression{startTestJob_DEV==false}}
             steps{
                 script{
                     manager.addShortText("${params.AKT_DIR}")

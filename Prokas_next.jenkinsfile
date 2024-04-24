@@ -24,6 +24,7 @@ pipeline{
                 script{
                     manager.addShortText("AKT")
                     bat(label:"clone/clean/revert/update AKT", script:"""
+                        if NOT EXIST "${params.AKT_DIR}" (md "${params.AKT_DIR}")
                         cd /D ${params.AKT_DIR}
                         Prokas.exe svn ccu akt"
                     """)

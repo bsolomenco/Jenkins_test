@@ -28,7 +28,7 @@ pipeline{
             steps{
                 script{
                     manager.addShortText("${params.DIR} ${params.URL}")
-                    /*
+                    ///*
                     bat(label:"clean/revert/update ${params.DIR}", script:"""
                         if EXIST ${params.DIR} (
                             svn.exe info    --show-item url ${params.DIR}
@@ -42,7 +42,7 @@ pipeline{
                             svn.exe checkout ${params.URL} ${params.DIR}
                         )
                     """)
-                    */
+                    //*/
                 }
             }
         }

@@ -1,5 +1,5 @@
 /* Repository clone/clean/update
-- editableCoice need editable-plugin (https://plugins.jenkins.io/editable-choice)
+- editableCoice needs editable-plugin (https://plugins.jenkins.io/editable-choice)
 */
 
 pipeline{

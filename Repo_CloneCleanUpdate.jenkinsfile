@@ -29,6 +29,7 @@ pipeline{
     stages{
         stage("Repo clone/clean/update"){
             steps{
+                echo "params: NOD=${params.NOD} DIR=${params.DIR} URL=${params.URL} REV=${params.REV}"
                 script{
                     manager.addShortText("${params.DIR} ${params.URL}")
                     bat(label:"clean/revert/update ${params.DIR}", script:"""

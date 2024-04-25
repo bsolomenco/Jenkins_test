@@ -19,7 +19,7 @@ pipeline{
             when{expression{params.URL!=""}}
             steps{
                 script{
-                    manager.addShortText("${params.DIR}")
+                    manager.addShortText("${params.DIR} ${params.URL}")
                     bat(label:"clean/revert/update ${Src}", script:"""
                         if EXIST ${Src} (
                             svn.exe info    --show-item url ${Src}

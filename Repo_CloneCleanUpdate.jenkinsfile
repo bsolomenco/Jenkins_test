@@ -1,4 +1,6 @@
-//Repository clone/clean/update
+/* Repository clone/clean/update
+- editableCoice need editable-plugin (https://plugins.jenkins.io/editable-choice)
+*/
 
 pipeline{
     options{
@@ -8,23 +10,18 @@ pipeline{
         buildDiscarder(logRotator(numToKeepStr:'10'))
     }
     parameters{
-        choice(name:"NOD"   , description: "Jenkins node label where to run"    , choices:[
+        editableChoice(name:"NOD"   , description: "Jenkins node label where to run"    , choices:[
             "Prokas"
         ])
-        choice(name:"DIR"   , description: "folder"     , choices:[
+        editableChoice(name:"DIR"   , description: "folder"     , choices:[
             'G:\\ProBuild',
             'G:\\Dev\\src',
             'G:\\Akt\\src'
         ])
-        choice(name:"URL"   , description: "repo URL"   , choices:[
+        editableChoice(name:"URL"   , description: "repo URL"   , choices:[
             "https://awma-svn01.intra.ads-root.de/svn/probuild/trunk",
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/trunk",
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT"
-        ])
-        editableChoice(name:"DIRxxx"   , description: "folder"     , choices:[
-            'G:\\ProBuild',
-            'G:\\Dev\\src',
-            'G:\\Akt\\src'
         ])
     }
     agent{label "${params.NOD}"}

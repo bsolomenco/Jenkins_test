@@ -38,6 +38,7 @@ pipeline{
             steps{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
+                    /*
                     bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
                         svn.exe info    --show-item url ${params.PROBUILD_DIR}
                         svn.exe cleanup ${params.PROBUILD_DIR}
@@ -47,24 +48,25 @@ pipeline{
                         svn.exe revert  ${params.PROBUILD_DIR} -R
                         svn.exe update  ${params.PROBUILD_DIR} --accept postpone
                     """)
+                    */
                 }
+                build job:'Repo_CloneCleanUpdate', quietPeriod:0, wait:true, parameters:[
+                    [$class: 'StringParameterValue', name: 'NOD', value: "${params.NOD}"],
+                    [$class: 'StringParameterValue', name: 'DIR', value: "${params.PROBUILD_DIR}"],
+                    [$class: 'StringParameterValue', name: 'URL', value: "https://awma-svn01.intra.ads-root.de/svn/probuild/trunk"],
+                    [$class: 'StringParameterValue', name: 'REV', value: ""],
+                ]
+                echo "duration=${currentBuild.durationString}"
             }
         }
         stage("Dev?"){
             steps{
                 script{
-                    bat(label:"clean/revert/update ${params.DEV_DIR}", script:"""
-                        if NOT EXIST "${params.DEV_DIR}" (
-                            md "${params.DEV_DIR}"
-                            cd /D ${params.DEV_DIR}
-                            ${ProBuildBin}\\Prokas.exe svn ccu trunk"
-                        )
-                    """)
                     def currRevision = bat(label:'get curr revision', returnStatus:false, returnStdout:true, script: "@echo off & svn info --revision COMMITTED --show-item revision ${params.DEV_DIR}\\src").trim().toInteger()
                     Rev = bat(label:'get next revision', returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${params.DEV_DIR}\\src")
                     if(currRevision < Rev){
                         echo "currRevision=${currRevision} < nextRevision=${Rev} => start testing job"
-                        startTestJob_DEV = true
+                        //startTestJob_DEV = true
                     }
                 }
             }
@@ -87,16 +89,11 @@ pipeline{
             when{expression{startTestJob_DEV==false}}
             steps{
                 script{
-                    bat(label:"clean/revert/update ${params.AKT_DIR}", script:"""
-                        if NOT EXIST "${params.AKT_DIR}" (md "${params.AKT_DIR}")
-                        cd /D ${params.AKT_DIR}
-                        ${ProBuildBin}\\Prokas.exe svn ccu akt"
-                    """)
                     def currRevision = bat(label:'get curr revision', returnStatus:false, returnStdout:true, script: "@echo off & svn info --revision COMMITTED --show-item revision ${params.AKT_DIR}\\src").trim().toInteger()
                     Rev = bat(label:'get next revision', returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${params.AKT_DIR}\\src")
                     if(currRevision < Rev){
                         echo "currRevision=${currRevision} < nextRevision=${Rev} => start testing job"
-                        startTestJob_AKT = true
+                        //startTestJob_AKT = true
                     }
                 }
             }

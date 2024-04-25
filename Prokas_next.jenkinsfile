@@ -39,7 +39,7 @@ pipeline{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
                     bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
-                        Prokas.exe svn ccu ProBuild"
+                        ${ProBuildBin}\\Prokas.exe svn ccu ProBuild"
                     """)
                 }
             }
@@ -51,7 +51,7 @@ pipeline{
                         if NOT EXIST "${params.DEV_DIR}" (
                             md "${params.DEV_DIR}"
                             cd /D ${params.DEV_DIR}
-                            Prokas.exe svn ccu trunk"
+                            ${ProBuildBin}\\Prokas.exe svn ccu trunk"
                         )
                     """)
                     def currRevision = bat(label:'get curr revision', returnStatus:false, returnStdout:true, script: "@echo off & svn info --revision COMMITTED --show-item revision ${params.DEV_DIR}\\src").trim().toInteger()
@@ -84,7 +84,7 @@ pipeline{
                     bat(label:"clean/revert/update ${params.AKT_DIR}", script:"""
                         if NOT EXIST "${params.AKT_DIR}" (md "${params.AKT_DIR}")
                         cd /D ${params.AKT_DIR}
-                        Prokas.exe svn ccu akt"
+                        ${ProBuildBin}\\Prokas.exe svn ccu akt"
                     """)
                     def currRevision = bat(label:'get curr revision', returnStatus:false, returnStdout:true, script: "@echo off & svn info --revision COMMITTED --show-item revision ${params.AKT_DIR}\\src").trim().toInteger()
                     Rev = bat(label:'get next revision', returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${params.AKT_DIR}\\src")

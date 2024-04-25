@@ -37,7 +37,7 @@ pipeline{
                             svn.exe cleanup "${params.DIR}" --remove-unversioned
                             svn.exe cleanup "${params.DIR}" --remove-ignored
                             svn.exe revert  "${params.DIR}" -R
-                            svn.exe update  "${params.DIR}" --accept params.DIRe
+                            svn.exe update  "${params.DIR}" --accept --postpone
                         ) else (
                             svn.exe checkout ${params.URL} "${params.DIR}"
                         )

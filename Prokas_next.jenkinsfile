@@ -30,7 +30,7 @@ pipeline{
     triggers{
         cron('* * * * *')
         pollSCM('* * * * *')
-        upstream(upstreamProjects:'RevTest_Devjob1,RevTest_Akt', threshold:isCompleteBuild())
+        //upstream(upstreamProjects:'RevTest_Devjob1,RevTest_Akt', threshold:isCompleteBuild())
     }
     agent{label "${params.NOD}"}
     stages{

@@ -30,16 +30,16 @@ pipeline{
                     manager.addShortText("${params.DIR} ${params.URL}")
                     ///*
                     bat(label:"clean/revert/update ${params.DIR}", script:"""
-                        if EXIST ${params.DIR} (
-                            svn.exe info    --show-item url ${params.DIR}
-                            svn.exe cleanup ${params.DIR}
-                            svn.exe cleanup ${params.DIR} --vacuum-pristines
-                            svn.exe cleanup ${params.DIR} --remove-unversioned
-                            svn.exe cleanup ${params.DIR} --remove-ignored
-                            svn.exe revert  ${params.DIR} -R
-                            svn.exe update  ${params.DIR} --accept params.DIRe
-                        ) params.DIR(
-                            svn.exe checkout ${params.URL} ${params.DIR}
+                        if EXIST "${params.DIR}" (
+                            svn.exe info    --show-item url "${params.DIR}"
+                            svn.exe cleanup "${params.DIR}"
+                            svn.exe cleanup "${params.DIR}" --vacuum-pristines
+                            svn.exe cleanup "${params.DIR}" --remove-unversioned
+                            svn.exe cleanup "${params.DIR}" --remove-ignored
+                            svn.exe revert  "${params.DIR}" -R
+                            svn.exe update  "${params.DIR}" --accept params.DIRe
+                        ) else (
+                            svn.exe checkout ${params.URL} "${params.DIR}"
                         )
                     """)
                     //*/

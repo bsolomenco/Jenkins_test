@@ -23,6 +23,7 @@ pipeline{
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/trunk",
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT/SRC"
         ])
+        string(name:"REV"           , defaultValue:""           , description: "revision number (empty => last)")
     }
     agent{label "${params.NOD}"}
     stages{
@@ -38,7 +39,11 @@ pipeline{
                             svn.exe cleanup "${params.DIR}" --remove-unversioned
                             svn.exe cleanup "${params.DIR}" --remove-ignored
                             svn.exe revert  "${params.DIR}" -R
-                            svn.exe update  "${params.DIR}" --accept postpone
+                            if "${params.REV}"=="" (
+                                svn update ${params.DIR}
+                            ) else (
+                                svn update ${params.DIR} --accept postpone --revision ${params.REV}
+                            )
                         ) else (
                             svn.exe checkout ${params.URL} "${params.DIR}"
                         )

@@ -39,7 +39,13 @@ pipeline{
                 script{
                     manager.addShortText("${params.PROBUILD_DIR}")
                     bat(label:"clean/revert/update ${params.PROBUILD_DIR}", script:"""
-                        ${ProBuildBin}\\Prokas.exe svn ccu ProBuild"
+                        svn.exe info    --show-item url ${params.PROBUILD_DIR}
+                        svn.exe cleanup ${params.PROBUILD_DIR}
+                        svn.exe cleanup ${params.PROBUILD_DIR} --vacuum-pristines
+                        svn.exe cleanup ${params.PROBUILD_DIR} --remove-unversioned
+                        svn.exe cleanup ${params.PROBUILD_DIR} --remove-ignored
+                        svn.exe revert  ${params.PROBUILD_DIR} -R
+                        svn.exe update  ${params.PROBUILD_DIR} --accept postpone
                     """)
                 }
             }

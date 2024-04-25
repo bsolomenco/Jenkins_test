@@ -11,9 +11,9 @@ pipeline{
         string(name:"NOD"   , defaultValue:"Prokas" , description: "Jenkins node label where to run")
         //string(name:"DIR"   , defaultValue:""       , description: "folder; G:\\ProBuild G:\\Dev\\src G:\\Akt\\src")
         choice(name:"DIR"   , choices:[
-            'G:\ProBuild',
-            'G:\Dev\src',
-            'G:\Akt\src'
+            'G:\\ProBuild',
+            'G:\\Dev\\src',
+            'G:\\Akt\\src'
         ]   , description: "folder")
         //string(name:"URL"   , defaultValue:""       , description: "repo URL; https://awma-svn01.intra.ads-root.de/svn/probuild/trunk https://awma-svn01.intra.ads-root.de/svn/prokas2/trunk https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT")
         choice(name:"URL"   , choices:[

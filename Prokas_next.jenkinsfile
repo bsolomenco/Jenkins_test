@@ -15,12 +15,22 @@ def Rev = 0
 def startTestJob_DEV = false
 def startTestJob_AKT = false
 pipeline{
-    options{timestamps()}
+    options{
+        timestamps()
+        disableConcurrentBuilds()
+        quietPeriod(0)
+        buildDiscarder(logRotator(numToKeepStr:'100'))
+    }
     parameters{
         string(name:"NOD"         , defaultValue:"Prokas"        , description: "Jenkins node label where to run")
         string(name:"PROBUILD_DIR", defaultValue:"G:\\ProBuild"  , description: "ProBuild folder")
         string(name:"DEV_DIR"     , defaultValue:"G:\\Dev"       , description: "Dev folder (trunk)")
         string(name:"AKT_DIR"     , defaultValue:"G:\\Akt"       , description: "Akt folder (latest version, e.g. 7.6.725 ...)")
+    }
+    triggers{
+        cron('* * * * *')
+        pollSCM('* * * * *')
+        upstream(upstreamProjects:'RevTest_Devjob1,RevTest_Akt', threshold:isCompleteBuild())
     }
     agent{label "${params.NOD}"}
     stages{

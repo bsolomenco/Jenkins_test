@@ -55,7 +55,7 @@ pipeline{
                     Rev = bat(label:'get next revision', returnStatus:true, returnStdout:false, script: "@echo off & ${ProBuildBin}\\Prokas.exe svn nextRev ${params.DEV_DIR}\\src")
                     if(currRevision < Rev){
                         echo "currRevision=${currRevision} < nextRevision=${Rev} => start testing job"
-                        //startTestJob_DEV = true
+                        startTestJob_DEV = true
                     }
                 }
             }

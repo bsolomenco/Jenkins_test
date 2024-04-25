@@ -8,17 +8,24 @@ pipeline{
         buildDiscarder(logRotator(numToKeepStr:'10'))
     }
     parameters{
-        string(name:"NOD"   , defaultValue:"Prokas" , description: "Jenkins node label where to run")
-        choice(name:"DIR"   , description: "folder" , choices:[
+        choice(name:"NOD"   , description: "Jenkins node label where to run"    , choices:[
+            "Prokas"
+        ])
+        choice(name:"DIR"   , description: "folder"     , choices:[
             'G:\\ProBuild',
             'G:\\Dev\\src',
             'G:\\Akt\\src'
         ])
-        choice(name:"URL"   , choices:[
+        choice(name:"URL"   , description: "repo URL"   , choices:[
             "https://awma-svn01.intra.ads-root.de/svn/probuild/trunk",
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/trunk",
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT"
-        ]   , description: "repo URL")
+        ])
+        editableChoice(name:"DIRxxx"   , description: "folder"     , choices:[
+            'G:\\ProBuild',
+            'G:\\Dev\\src',
+            'G:\\Akt\\src'
+        ])
     }
     agent{label "${params.NOD}"}
     stages{

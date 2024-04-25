@@ -21,7 +21,7 @@ pipeline{
         editableChoice(name:"URL"   , description: "repo URL"   , choices:[
             "https://awma-svn01.intra.ads-root.de/svn/probuild/trunk",
             "https://awma-svn01.intra.ads-root.de/svn/prokas2/trunk",
-            "https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT"
+            "https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT/SRC"
         ])
     }
     agent{label "${params.NOD}"}

@@ -1,0 +1,39 @@
+//Repository clone/clean/update
+
+def Src = "${params.DIR}\\src"
+pipeline{
+    options{
+        timestamps()
+        //disableConcurrentBuilds()
+        quietPeriod(0)
+        buildDiscarder(logRotator(numToKeepStr:'10'))
+    }
+    parameters{
+        string(name:"NOD"   , defaultValue:"Prokas" , description: "Jenkins node label where to run")
+        string(name:"DIR"   , defaultValue:""       , description: "folder; G:\\ProBuild G:\\Dev G:\\Akt")
+        string(name:"URL"   , defaultValue:""       , description: "repo URL; https://awma-svn01.intra.ads-root.de/svn/probuild/trunk https://awma-svn01.intra.ads-root.de/svn/prokas2/trunk https://awma-svn01.intra.ads-root.de/svn/prokas2/branches/Versionen/AKT")
+    }
+    agent{label "${params.NOD}"}
+    stages{
+        stage("Repo clone/clean/update"){
+            steps{
+                script{
+                    manager.addShortText("${params.DIR}")
+                    bat(label:"clean/revert/update ${Src}", script:"""
+                        if EXIST ${Src} (
+                            svn.exe info    --show-item url ${Src}
+                            svn.exe cleanup ${Src}
+                            svn.exe cleanup ${Src} --vacuum-pristines
+                            svn.exe cleanup ${Src} --remove-unversioned
+                            svn.exe cleanup ${Src} --remove-ignored
+                            svn.exe revert  ${Src} -R
+                            svn.exe update  ${Src} --accept postpone
+                        ) else (
+                            svn.exe checkout ${params.URL} ${Src}
+                        )
+                    """)
+                }
+            }
+        }
+    }
+}
